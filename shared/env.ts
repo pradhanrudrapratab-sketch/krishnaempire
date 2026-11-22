@@ -18,9 +18,7 @@ const schema = z.object({
   DASHBOARD_URL: z.string().optional(),
   API_SECRET: z.string().optional(),
   SESSION_SECRET: z.string().optional(),
-  // Music (optional): a Lavalink node.
-  LAVALINK_URL: z.string().optional(),
-  LAVALINK_PASSWORD: z.string().optional(),
+  HEALTH_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
 });
 
 const parsed = schema.safeParse(process.env);

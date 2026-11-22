@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import { env } from '../shared/env';
 import { pool } from './db';
 import { registerEvents } from './events';
+import { startHealth } from './health';
 
 // Only the intents Phase 1–2 need. Message Content is privileged: enable it in the Developer Portal.
 // Privileged intents to enable in the Developer Portal: Server Members, Message Content.
@@ -15,9 +16,11 @@ const client = new Client({
 
 await pool.query('SELECT 1'); // fail fast if the DB is unreachable
 registerEvents(client);
+const health = startHealth(client);
 
 process.on('unhandledRejection', (e) => console.error('[unhandledRejection]', e));
 const shutdown = async () => {
+  health.close();
   await client.destroy();
   await pool.end();
   process.exit(0);

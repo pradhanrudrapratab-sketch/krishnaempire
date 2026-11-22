@@ -13,7 +13,7 @@ Single-server Discord bot + (Phase 9) Next.js dashboard. See the master spec for
 | 5 Anti-Nuke, trusted bots/users, honeypot | Written, untested against Discord |
 | 6 Verification, levels, auto rank, rank cards | Written, untested against Discord |
 | 7 Tickets, join-to-create, YouTube, autoresponder, emoji | Written, untested against Discord |
-| 8 Music (Lavalink/Shoukaku) | Written, untested; needs your own Lavalink node |
+| 8 Music (built-in, ffmpeg + @discordjs/voice, direct links) | Written, untested |
 | 9 Web dashboard (OAuth2, Next.js) | Not started |
 | 10 Integration tests, deployment | Only unit tests (permissions, level math, prefix) |
 
@@ -28,6 +28,18 @@ Nothing here has been run against a live Discord server or Postgres, and the cod
 3. `cp .env.example .env` and fill it in.
 4. `npm install && npm run db:migrate && npm start`
 5. `npm test` runs the permission-engine tests.
+
+## Health check
+
+`GET http://<host>:3001/health` (port via `HEALTH_PORT`) returns only service status, e.g.
+`{"status":"ok","services":{"bot":"running","database":"running","music":"running"}}`.
+HTTP 200 when everything runs, 503 if any service is stopped. No other data is exposed.
+
+## Music
+
+`/play <link>` or `!play <link>` plays **direct audio links**: mp3/ogg/wav/flac files and radio streams. No Lavalink needed.
+YouTube/Spotify page links are rejected (they are web pages, not audio files). Needs `ffmpeg-static` (installed by `npm install`).
+Links to private/internal IPs are blocked.
 
 ## Design notes
 

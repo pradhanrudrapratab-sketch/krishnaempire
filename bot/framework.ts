@@ -54,6 +54,8 @@ export interface Ctx {
   int(name: string): number | null;
   /** The channel the command was run in. */
   here: any | null;
+  /** Acknowledge a slow command (slash: deferReply; prefix: typing indicator). */
+  defer(): Promise<void>;
   reply(o: string | BaseMessageOptions, ephemeral?: boolean): Promise<void>;
 }
 
@@ -152,6 +154,7 @@ export async function handleSlash(i: ChatInputCommandInteraction, member: GuildM
     channel: (n) => { const r = raw(n); return r ? (i.guild!.channels.cache.get(r) ?? null) : null; },
     int: (n) => { const r = raw(n); return r != null && /^-?\d+$/.test(r) ? Number(r) : null; },
     here: i.channel,
+    defer: async () => { if (!i.deferred && !i.replied) await i.deferReply(); },
     reply: async (o, eph = false) => {
       const body: any = { ...(typeof o === 'string' ? { content: o } : o), allowedMentions: noPing };
       if (eph) body.flags = MessageFlags.Ephemeral;
@@ -190,6 +193,7 @@ export async function handlePrefix(msg: Message<true>, member: GuildMember, pref
     channel: (n) => { const id = values[n]?.match(ID)?.[0]; return id ? (msg.guild.channels.cache.get(id) ?? null) : null; },
     int: (n) => (values[n] != null && /^-?\d+$/.test(values[n]) ? Number(values[n]) : null),
     here: msg.channel,
+    defer: async () => { await msg.channel.sendTyping().catch(() => {}); },
     reply: async (o) => { await msg.reply({ ...(typeof o === 'string' ? { content: o } : o), allowedMentions: { ...noPing, repliedUser: false } }); },
   };
   await execute(cmd, ctx);
