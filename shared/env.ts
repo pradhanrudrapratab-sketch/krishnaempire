@@ -20,6 +20,8 @@ const schema = z.object({
   API_SECRET: z.string().optional(),
   SESSION_SECRET: z.string().optional(),
   HEALTH_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
+  // Hosts like Render/Railway inject PORT; the health endpoint listens on it when present.
+  PORT: z.coerce.number().int().min(1).max(65535).optional(),
 });
 
 const parsed = schema.safeParse(process.env);

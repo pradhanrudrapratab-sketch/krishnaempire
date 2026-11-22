@@ -25,6 +25,7 @@ export function startHealth(client: Client) {
     res.writeHead(all ? 200 : 503, { 'content-type': 'application/json', 'cache-control': 'no-store' });
     res.end(req.method === 'HEAD' ? undefined : JSON.stringify({ status: all ? 'ok' : 'degraded', services: { bot: s(bot), database: s(database), music: s(music) } }));
   });
-  server.listen(env.HEALTH_PORT, () => console.log(`Health endpoint: http://0.0.0.0:${env.HEALTH_PORT}/health`));
+  const port = env.PORT ?? env.HEALTH_PORT;
+  server.listen(port, '0.0.0.0', () => console.log(`Health endpoint: http://0.0.0.0:${port}/health`));
   return server;
 }

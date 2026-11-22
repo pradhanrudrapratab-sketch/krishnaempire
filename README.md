@@ -36,6 +36,13 @@ Data survives bot restarts but is **lost if the OS clears its temp directory** (
 Set `DATA_DIR=/some/path` to keep it elsewhere, or `DATA_DIR=memory` for RAM-only. The SQL is standard Postgres,
 so moving back to a real Postgres server later only means replacing `bot/db.ts`.
 
+## Deploying on Render
+
+Build: `npm install` (or `yarn install`) · Start: `npm start`. Service type: Web Service (needs an open port; `/health` uses Render's `PORT`).
+Environment variables: `BOT_TOKEN`, `CLIENT_ID`, `GUILD_ID`, `OWNER_ID` (no database variable needed).
+Free instances sleep without traffic: point an uptime pinger at `https://<your-app>.onrender.com/health` every 5 minutes.
+Render's disk is temporary, so data resets on each deploy/restart (fine for this setup).
+
 ## Health check
 
 `GET http://<host>:3001/health` (port via `HEALTH_PORT`) returns only service status, e.g.
