@@ -19,7 +19,7 @@ export async function getCfg<T extends object>(guildId: string, module: string, 
 export async function patchCfg(guildId: string, module: string, patch: Record<string, unknown>, actorId: string) {
   await ensureGuild(pool, guildId);
   await pool.query(
-    `INSERT INTO module_config (guild_id, module, data) VALUES ($1,$2,$3)
+    `INSERT INTO module_config (guild_id, module, data) VALUES ($1,$2,$3::text::jsonb)
      ON CONFLICT (guild_id, module) DO UPDATE SET data = module_config.data || EXCLUDED.data, updated_at = now()`,
     [guildId, module, JSON.stringify(patch)],
   );

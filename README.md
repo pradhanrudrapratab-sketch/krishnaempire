@@ -26,8 +26,15 @@ Nothing here has been run against a live Discord server or Postgres, and the cod
 2. Invite the bot with: Manage Roles, Manage Channels, Manage Messages, Moderate Members, Ban/Kick Members,
    View Audit Log, Send Messages, Embed Links, Attach Files, plus the `bot` and `applications.commands` scopes. Do not grant Administrator.
 3. `cp .env.example .env` and fill it in.
-4. `npm install && npm run db:migrate && npm start`
+4. `npm install && npm start` (the database schema is created automatically)
 5. `npm test` runs the permission-engine tests.
+
+## Database
+
+Uses **PGlite** (real Postgres compiled to WASM) in your OS temp folder, so no database server is needed.
+Data survives bot restarts but is **lost if the OS clears its temp directory** (reboot on some systems, cleanup jobs, many free hosts).
+Set `DATA_DIR=/some/path` to keep it elsewhere, or `DATA_DIR=memory` for RAM-only. The SQL is standard Postgres,
+so moving back to a real Postgres server later only means replacing `bot/db.ts`.
 
 ## Health check
 

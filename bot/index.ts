@@ -1,6 +1,6 @@
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import { env } from '../shared/env';
-import { pool } from './db';
+import { migrate, pool } from './db';
 import { registerEvents } from './events';
 import { startHealth } from './health';
 
@@ -14,7 +14,7 @@ const client = new Client({
   partials: [Partials.Message, Partials.GuildMember], // so deletes/edits/leaves of uncached items are still logged
 });
 
-await pool.query('SELECT 1'); // fail fast if the DB is unreachable
+await migrate(); // embedded DB: schema is applied automatically on every start
 registerEvents(client);
 const health = startHealth(client);
 

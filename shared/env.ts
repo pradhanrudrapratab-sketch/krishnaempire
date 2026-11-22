@@ -13,7 +13,8 @@ const schema = z.object({
     .string()
     .default('!')
     .refine((p) => validatePrefix(p) === null, 'invalid prefix'),
-  DATABASE_URL: z.string().min(1, 'required'),
+  // Optional: where the embedded database lives. Default: <OS tmp dir>/discord-bot-db. Use "memory" for RAM only.
+  DATA_DIR: z.string().optional(),
   // Used from Phase 9 (dashboard); optional until then.
   DASHBOARD_URL: z.string().optional(),
   API_SECRET: z.string().optional(),
