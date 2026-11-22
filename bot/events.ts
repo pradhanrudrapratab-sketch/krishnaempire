@@ -19,9 +19,14 @@ export function registerEvents(client: Client) {
       process.exit(1);
     }
     await ensureGuild(pool, guild.id);
-    const rest = new REST().setToken(env.BOT_TOKEN);
-    await rest.put(Routes.applicationGuildCommands(env.CLIENT_ID, env.GUILD_ID), { body: slashBodies() });
-    console.log(`Ready as ${c.user.tag}; ${slashBodies().length} slash commands registered.`);
+    console.log(`Ready as ${c.user.tag}`);
+    try {
+      const body = slashBodies();
+      await new REST().setToken(env.BOT_TOKEN).put(Routes.applicationGuildCommands(env.CLIENT_ID, env.GUILD_ID), { body });
+      console.log(`${body.length} slash commands registered.`);
+    } catch (e) {
+      console.error('[slash] registration failed (prefix commands still work):', e);
+    }
   });
 
   // Single-server bot: leave anywhere else.

@@ -45,9 +45,7 @@ Render's disk is temporary, so data resets on each deploy/restart (fine for this
 
 ## Health check
 
-`GET http://<host>:3001/health` (port via `HEALTH_PORT`) returns only service status, e.g.
-`{"status":"ok","services":{"bot":"running","database":"running","music":"running"}}`.
-HTTP 200 when everything runs, 503 if any service is stopped. No other data is exposed.
+`GET /health` (or `/`) returns `200 ok`. It does nothing else (no DB/Discord calls), so it is meant only for Render and an uptime pinger such as UptimeRobot (HEAD or GET every 5 min).
 
 ## Music
 

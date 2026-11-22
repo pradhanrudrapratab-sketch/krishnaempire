@@ -78,7 +78,10 @@ export function toSlash(cmd: CommandDef) {
     const groups = new Map<string, SlashCommandSubcommandGroupBuilder>();
     // Discord forbids a subcommand and a group sharing a name ("config" vs "config xp"): rename the plain one.
     const groupNames = new Set(Object.keys(cmd.subs).filter((k) => k.includes(' ')).map((k) => k.split(' ')[0]));
+    const used = new Set<string>();
     for (const [key, def] of Object.entries(cmd.subs)) {
+      if (key.split(' ').length > 2 || used.has(key)) throw new Error(`Invalid slash definition: /${cmd.name} "${key}" (max 2 words, names must be unique)`);
+      used.add(key);
       const [first, second] = key.split(' ');
       const build = (s: any, name: string) => {
         s.setName(name).setDescription(def.description);

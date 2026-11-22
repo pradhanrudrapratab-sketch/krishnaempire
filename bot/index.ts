@@ -2,7 +2,6 @@ import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import { env } from '../shared/env';
 import { migrate, pool } from './db';
 import { registerEvents } from './events';
-import { startHealth } from './health';
 
 // Only the intents Phase 1–2 need. Message Content is privileged: enable it in the Developer Portal.
 // Privileged intents to enable in the Developer Portal: Server Members, Message Content.
@@ -16,11 +15,9 @@ const client = new Client({
 
 await migrate(); // embedded DB: schema is applied automatically on every start
 registerEvents(client);
-const health = startHealth(client);
 
 process.on('unhandledRejection', (e) => console.error('[unhandledRejection]', e));
 const shutdown = async () => {
-  health.close();
   await client.destroy();
   await pool.end();
   process.exit(0);

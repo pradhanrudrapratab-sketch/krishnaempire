@@ -56,8 +56,8 @@ const level: CommandDef = {
     'config cooldown': { description: 'Seconds between XP awards', args: [{ name: 'seconds', type: 'int', description: '0–3600' }] },
     'config announce': { description: 'Level-up messages', args: [{ name: 'value', type: 'string', description: 'on/off', choices: ['on', 'off'] }] },
     'config multiplier': { description: 'Level curve multiplier (percent)', args: [{ name: 'percent', type: 'int', description: '25–400' }] },
-    'config exclude channel': { description: 'Toggle excluded channel', args: [{ name: 'channel', type: 'channel', description: 'Channel' }] },
-    'config exclude role': { description: 'Toggle excluded role', args: [{ name: 'role', type: 'role', description: 'Role' }] },
+    'config excludechannel': { description: 'Toggle excluded channel', args: [{ name: 'channel', type: 'channel', description: 'Channel' }] },
+    'config excluderole': { description: 'Toggle excluded role', args: [{ name: 'role', type: 'role', description: 'Role' }] },
   },
   async run(ctx) {
     const gid = ctx.guild.id, by = ctx.member.id;
@@ -83,8 +83,8 @@ const level: CommandDef = {
       case 'config cooldown': { const s = ctx.int('seconds')!; if (s < 0 || s > 3600) return bad('Use 0–3600.'); await patchCfg(gid, 'levels', { cooldownS: s }, by); return ok(`Cooldown: ${s}s.`); }
       case 'config announce': await patchCfg(gid, 'levels', { announce: ctx.str('value')!.toLowerCase() === 'on' }, by); return ok('Updated.');
       case 'config multiplier': { const p = ctx.int('percent')!; if (p < 25 || p > 400) return bad('Use 25–400.'); await patchCfg(gid, 'levels', { multiplier: p / 100 }, by); return ok(`Curve multiplier: ${p}%. Existing levels recompute on next XP gain.`); }
-      case 'config exclude channel': { const ch = ctx.channel('channel')!; await patchCfg(gid, 'levels', { excludedChannels: toggle(c.excludedChannels, ch.id) }, by); return ok('Toggled excluded channel.'); }
-      case 'config exclude role': { const r = ctx.role('role')!; await patchCfg(gid, 'levels', { excludedRoles: toggle(c.excludedRoles, r.id) }, by); return ok('Toggled excluded role.'); }
+      case 'config excludechannel': { const ch = ctx.channel('channel')!; await patchCfg(gid, 'levels', { excludedChannels: toggle(c.excludedChannels, ch.id) }, by); return ok('Toggled excluded channel.'); }
+      case 'config excluderole': { const r = ctx.role('role')!; await patchCfg(gid, 'levels', { excludedRoles: toggle(c.excludedRoles, r.id) }, by); return ok('Toggled excluded role.'); }
       default: return ctx.reply(panel('Level settings', `XP: ${c.xpMin}–${c.xpMax} per message · cooldown ${c.cooldownS}s · curve ×${c.multiplier}\nAnnounce: ${c.announce}\nExcluded channels: ${c.excludedChannels.map((i) => `<#${i}>`).join(' ') || '_none_'}\nExcluded roles: ${c.excludedRoles.map((i) => `<@&${i}>`).join(' ') || '_none_'}`));
     }
   },

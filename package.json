@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch bot/index.ts",
-    "start": "tsx bot/index.ts",
+    "dev": "tsx watch bot/start.ts",
+    "start": "tsx bot/start.ts",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts"
   },
